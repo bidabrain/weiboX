@@ -72,4 +72,5 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.okhttp.logging)
     implementation(libs.coil.compose)
+    implementation("org.jsoup:jsoup:1.18.1")
 }

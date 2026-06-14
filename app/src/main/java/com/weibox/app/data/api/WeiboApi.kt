@@ -11,11 +11,14 @@ import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.logging.HttpLoggingInterceptor
+import org.jsoup.Jsoup
 import org.json.JSONArray
 import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.concurrent.TimeUnit
+
+class CaptchaRequiredException(val captchaUrl: String) : RuntimeException("触发验证码限制")
 
 private val DATE_FORMAT = SimpleDateFormat("EEE MMM dd HH:mm:ss Z yyyy", Locale.ENGLISH)
 private val USER_AGENTS = listOf(
@@ -24,6 +27,14 @@ private val USER_AGENTS = listOf(
 )
 
 class WeiboApi(cookieString: String) {
+
+    private val hasCookie = cookieString.isNotBlank()
+
+    // 无 CookieJar 的简单客户端，专用于 s.weibo.com 访客搜索
+    private val plainClient = OkHttpClient.Builder()
+        .connectTimeout(15, TimeUnit.SECONDS)
+        .readTimeout(20, TimeUnit.SECONDS)
+        .build()
 
     // CookieJar：初始化时解析存储的 cookie，自动捕获服务器下发的新 token
     private val cookieJar = object : CookieJar {
@@ -156,17 +167,88 @@ class WeiboApi(cookieString: String) {
     }
 
     suspend fun searchUsers(query: String, page: Int = 1): List<WeiboUser> = withContext(Dispatchers.IO) {
+        if (!hasCookie) {
+            searchUsersByWeb(query, page)
+        } else {
+            val encoded = java.net.URLEncoder.encode(query, "UTF-8")
+            val url = "https://m.weibo.cn/api/container/getIndex" +
+                    "?containerid=100103type%3D3%26q%3D$encoded" +
+                    "&page_type=searchall&page=$page"
+            val body = get(url)
+            parseUserSearch(body)
+        }
+    }
+
+    // ── 访客模式搜索（无 Cookie）────────────────────────────────────
+
+    private fun getVisitorTokens(): Pair<String, String> {
+        val request = Request.Builder()
+            .url("https://passport.weibo.com/visitor/genvisitor2?cb=visitor_gray_callback&reg=0")
+            .header("User-Agent", USER_AGENTS.first())
+            .header("Referer", "https://s.weibo.com/")
+            .get()
+            .build()
+        val body = plainClient.newCall(request).execute().body?.string()
+            ?: error("访客 token 获取失败")
+        // 响应是 JSONP：visitor_gray_callback({...})
+        val json = JSONObject(body.substringAfter("(").substringBeforeLast(")"))
+        if (json.optInt("retcode") != 20000000) error("访客 token 返回异常")
+        val data = json.getJSONObject("data")
+        return Pair(data.getString("sub"), data.getString("subp"))
+    }
+
+    private fun searchUsersByWeb(query: String, page: Int = 1): List<WeiboUser> {
+        val (sub, subp) = getVisitorTokens()
         val encoded = java.net.URLEncoder.encode(query, "UTF-8")
-        val url = "https://m.weibo.cn/api/container/getIndex" +
-                "?containerid=100103type%3D3%26q%3D$encoded" +
-                "&page_type=searchall&page=$page"
-        val body = get(url)
-        parseUserSearch(body)
+        val pageParam = if (page > 1) "&page=$page" else ""
+        val request = Request.Builder()
+            .url("https://s.weibo.com/user?q=$encoded&Refer=index$pageParam")
+            .header("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36")
+            .header("Referer", "https://weibo.com/")
+            .header("Accept-Language", "zh-CN,zh;q=0.9")
+            .header("Cookie", "SUB=$sub; SUBP=$subp")
+            .get()
+            .build()
+        val html = plainClient.newCall(request).execute().body?.string()
+            ?: return emptyList()
+        return parseUserSearchHtml(html)
+    }
+
+    private fun parseUserSearchHtml(html: String): List<WeiboUser> {
+        val doc = Jsoup.parse(html)
+        return doc.select("div.card.card-user-b").mapNotNull { card ->
+            runCatching {
+                val href = card.selectFirst("div.avator a")?.attr("href") ?: return@mapNotNull null
+                val uid = href.substringAfterLast("/")
+                if (uid.isBlank() || !uid.all { it.isDigit() }) return@mapNotNull null
+
+                val avatarUrl = card.selectFirst("div.avator img")?.attr("src") ?: ""
+                val screenName = card.selectFirst("a.name")?.text() ?: ""
+                val paras = card.select("div.info p")
+                val description = paras.getOrNull(0)?.text() ?: ""
+                val followersCount = card.selectFirst("span.s-nobr")?.text()
+                    ?.removePrefix("粉丝：") ?: ""
+                val verified = card.selectFirst("span.woo-icon-wrap") != null
+
+                WeiboUser(
+                    id = uid,
+                    screenName = screenName,
+                    description = description,
+                    avatarUrl = avatarUrl,
+                    coverUrl = "",
+                    followersCount = followersCount,
+                    followCount = 0,
+                    statusesCount = 0,
+                    verified = verified,
+                    verifiedReason = ""
+                )
+            }.getOrNull()
+        }
     }
 
     private fun parseUserSearch(json: String): List<WeiboUser> {
         val root = JSONObject(json)
-        if (root.optInt("ok") != 1) return emptyList()
+        checkOk(root)
         val cards = root.optJSONObject("data")?.optJSONArray("cards") ?: return emptyList()
         val users = mutableListOf<WeiboUser>()
         for (i in 0 until cards.length()) {
@@ -199,7 +281,16 @@ class WeiboApi(cookieString: String) {
         val request = Request.Builder().url(url).get().build()
         val response = client.newCall(request).execute()
         val body = response.body?.string() ?: error("Empty response from $url")
-        if (!response.isSuccessful) error("HTTP ${response.code} from $url")
+        if (!response.isSuccessful) {
+            val reason = when (response.code) {
+                432  -> "访问受限（432），请在设置中配置 Cookie"
+                401  -> "需要登录，请在设置中配置 Cookie"
+                403  -> "无访问权限，请检查 Cookie 是否有效"
+                429  -> "请求过于频繁，请稍后再试"
+                else -> "网络错误 ${response.code}"
+            }
+            error(reason)
+        }
         return body
     }
 
@@ -239,7 +330,9 @@ class WeiboApi(cookieString: String) {
     private fun parsePosts(json: String): List<WeiboPost> {
         val root = JSONObject(json)
         if (root.optInt("ok") != 1) {
-            Log.w("WeiboHttp", "parsePosts: ok=${root.optInt("ok")} msg=${root.optString("msg")} url=${root.optString("url")}")
+            val url = root.optString("url")
+            if (url.contains("captcha")) throw CaptchaRequiredException(url)
+            Log.w("WeiboHttp", "parsePosts: ok=${root.optInt("ok")} url=$url")
             return emptyList()
         }
         val cards = root.optJSONObject("data")?.optJSONArray("cards") ?: return emptyList()

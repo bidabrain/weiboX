@@ -20,7 +20,8 @@ data class HomeUiState(
     val error: String? = null,
     val isEmpty: Boolean = false,
     val currentPage: Int = 1,
-    val hasMore: Boolean = true
+    val hasMore: Boolean = true,
+    val lastRefreshTime: Long = 0L
 )
 
 @HiltViewModel
@@ -41,6 +42,10 @@ class HomeViewModel @Inject constructor(
             }
             .launchIn(viewModelScope)
 
+        prefs.lastRefreshTime
+            .onEach { t -> _state.update { it.copy(lastRefreshTime = t) } }
+            .launchIn(viewModelScope)
+
         viewModelScope.launch {
             val lastRefresh = prefs.lastRefreshTime.first()
             val elapsed = System.currentTimeMillis() - lastRefresh
@@ -53,6 +58,7 @@ class HomeViewModel @Inject constructor(
     }
 
     fun refresh() {
+        if (_state.value.isRefreshing) return  // 防止并发重复刷新
         viewModelScope.launch {
             _state.update { it.copy(isRefreshing = true, error = null) }
             runCatching { repo.refreshTimeline() }

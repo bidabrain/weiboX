@@ -4,6 +4,8 @@ import androidx.room.*
 import com.weibox.app.data.db.entity.PostEntity
 import kotlinx.coroutines.flow.Flow
 
+data class UserLastPost(val userId: String, val lastPostAt: Long)
+
 @Dao
 interface PostDao {
     @Query("SELECT * FROM cached_posts ORDER BY createdAtTimestamp DESC")
@@ -23,6 +25,9 @@ interface PostDao {
 
     @Query("SELECT COUNT(*) FROM cached_posts")
     suspend fun count(): Int
+
+    @Query("SELECT userId, MAX(createdAtTimestamp) AS lastPostAt FROM cached_posts GROUP BY userId")
+    suspend fun getLastPostTimestampByUser(): List<UserLastPost>
 
     @Query("""
         DELETE FROM cached_posts WHERE id IN (

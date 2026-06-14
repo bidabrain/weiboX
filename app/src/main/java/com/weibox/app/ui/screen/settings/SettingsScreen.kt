@@ -1,5 +1,7 @@
 package com.weibox.app.ui.screen.settings
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -11,6 +13,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -267,11 +270,33 @@ fun SettingsScreen(vm: SettingsViewModel = hiltViewModel()) {
 
             // ── 关于 ──────────────────────────────────────────────
             SectionTitle("关于")
+            val context = LocalContext.current
             Text(
-                "WeiboX v1.0\n基于 weibo-crawler 数据方案",
+                "WeiboX v1.0\n第三方微博客户端，基于 weibo-crawler 数据方案，不存储任何账号信息。",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
             )
+            Spacer(Modifier.height(6.dp))
+            Text(
+                "本项目开源，欢迎 Star 和反馈问题：",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+            )
+            TextButton(
+                onClick = {
+                    context.startActivity(
+                        Intent(Intent.ACTION_VIEW,
+                            Uri.parse("https://github.com/bidabrain/weiboX"))
+                    )
+                },
+                contentPadding = PaddingValues(0.dp)
+            ) {
+                Text(
+                    "github.com/bidabrain/weiboX",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
         }
     }
 }

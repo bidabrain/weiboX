@@ -98,12 +98,13 @@ class WeiboRepository @Inject constructor(
                 result = runCatching { api.getUserPosts(uid, page) }
             }
 
-            result.onSuccess { posts.addAll(it) }
+            result.onSuccess { newPosts ->
+                posts.addAll(newPosts)
+                db.postDao().insertAll(newPosts.map { it.toEntity() })
+            }
         }
-        val sorted = posts.sortedByDescending { it.createdAtTimestamp }
-        db.postDao().insertAll(sorted.map { it.toEntity() })
         trimCache()
-        return sorted
+        return posts.sortedByDescending { it.createdAtTimestamp }
     }
 
     suspend fun refreshUserPosts(userId: String, page: Int = 1): List<WeiboPost> {

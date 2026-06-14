@@ -21,7 +21,8 @@ data class HomeUiState(
     val isEmpty: Boolean = false,
     val currentPage: Int = 1,
     val hasMore: Boolean = true,
-    val lastRefreshTime: Long = 0L
+    val lastRefreshTime: Long = 0L,
+    val isRandomMode: Boolean = false
 )
 
 @HiltViewModel
@@ -33,11 +34,18 @@ class HomeViewModel @Inject constructor(
     private val _state = MutableStateFlow(HomeUiState(isLoading = true))
     val state: StateFlow<HomeUiState> = _state.asStateFlow()
 
+    private var allPosts: List<WeiboPost> = emptyList()
+
     init {
         repo.getCachedTimeline()
             .onEach { posts ->
-                _state.update {
-                    it.copy(posts = posts, isLoading = false, isEmpty = posts.isEmpty())
+                allPosts = posts
+                _state.update { s ->
+                    s.copy(
+                        posts = if (s.isRandomMode) posts.shuffled() else posts,
+                        isLoading = false,
+                        isEmpty = posts.isEmpty()
+                    )
                 }
             }
             .launchIn(viewModelScope)
@@ -68,6 +76,16 @@ class HomeViewModel @Inject constructor(
                 }
                 .onFailure { e -> _state.update { it.copy(error = e.message) } }
             _state.update { it.copy(isRefreshing = false) }
+        }
+    }
+
+    fun toggleMode() {
+        val newRandom = !_state.value.isRandomMode
+        _state.update { s ->
+            s.copy(
+                isRandomMode = newRandom,
+                posts = if (newRandom) allPosts.shuffled() else allPosts
+            )
         }
     }
 

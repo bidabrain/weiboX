@@ -40,7 +40,8 @@ fun HomeScreen(
     Scaffold(
         topBar = {
             WeiboTopBar(
-                title = "时间线",
+                title = if (state.isRandomMode) "随机浏览" else "时间线",
+                onTitleClick = vm::toggleMode,
                 actions = {
                     RefreshStatusBar(
                         isRefreshing = state.isRefreshing,

@@ -9,6 +9,7 @@ import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
+import com.weibox.app.data.prefs.AppPreferences
 import com.weibox.app.data.repository.WeiboRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -18,11 +19,13 @@ import java.util.concurrent.TimeUnit
 class BackgroundRefreshWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
-    private val repository: WeiboRepository
+    private val repository: WeiboRepository,
+    private val prefs: AppPreferences
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
         runCatching { repository.refreshTimelineBackground() }
+            .onSuccess { prefs.saveLastRefreshTime(System.currentTimeMillis()) }
         return Result.success()
     }
 

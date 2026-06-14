@@ -1,6 +1,7 @@
 package com.weibox.app.ui.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -17,7 +18,8 @@ import com.weibox.app.R
 fun WeiboTopBar(
     title: String,
     navigationIcon: @Composable () -> Unit = {},
-    actions: @Composable () -> Unit = {}
+    actions: @Composable () -> Unit = {},
+    onTitleClick: (() -> Unit)? = null
 ) {
     Column {
         Surface(
@@ -43,7 +45,12 @@ fun WeiboTopBar(
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.padding(start = 16.dp)
+                        modifier = Modifier
+                            .padding(start = 16.dp)
+                            .then(
+                                if (onTitleClick != null) Modifier.clickable { onTitleClick() }
+                                else Modifier
+                            )
                     )
                 }
 

@@ -27,8 +27,6 @@
 
 ![UI 预览](docs/ui_mockup.png)
 
-> 通过 `python3 generate_mockup.py` 可重新生成此图（需要 Pillow ≥ 8.2）。
-
 ## 致谢
 
 本项目的网络请求逻辑、接口地址、请求头策略以及数据解析方案，均参考自开源项目：

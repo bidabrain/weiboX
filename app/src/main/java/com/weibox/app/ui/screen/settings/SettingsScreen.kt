@@ -2,11 +2,20 @@ package com.weibox.app.ui.screen.settings
 
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -210,6 +219,35 @@ fun SettingsScreen(vm: SettingsViewModel = hiltViewModel()) {
 
             HorizontalDivider()
 
+            // ── 后台刷新 ──────────────────────────────────────────
+            SectionTitle("后台刷新")
+            Row(
+                Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column(Modifier.weight(1f)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Filled.Sync, contentDescription = null)
+                        Spacer(Modifier.width(12.dp))
+                        Text("后台自动刷新", style = MaterialTheme.typography.bodyLarge)
+                    }
+                    Spacer(Modifier.height(2.dp))
+                    Text(
+                        "仅在 WiFi 下每 15 分钟自动更新",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                        modifier = Modifier.padding(start = 36.dp)
+                    )
+                }
+                PillSwitch(
+                    checked = state.backgroundRefreshEnabled,
+                    onCheckedChange = { vm.toggleBackgroundRefresh() }
+                )
+            }
+
+            HorizontalDivider()
+
             // ── 外观 ──────────────────────────────────────────────
             SectionTitle("外观")
             Row(
@@ -271,8 +309,13 @@ fun SettingsScreen(vm: SettingsViewModel = hiltViewModel()) {
             // ── 关于 ──────────────────────────────────────────────
             SectionTitle("关于")
             val context = LocalContext.current
+            val versionName = remember {
+                runCatching {
+                    context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "?"
+                }.getOrDefault("?")
+            }
             Text(
-                "WeiboX v1.0\n第三方微博客户端，基于 weibo-crawler 数据方案，不存储任何账号信息。",
+                "WeiboX v$versionName\n第三方微博客户端，基于 weibo-crawler 数据方案，不存储任何账号信息。",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
             )
@@ -298,6 +341,45 @@ fun SettingsScreen(vm: SettingsViewModel = hiltViewModel()) {
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun PillSwitch(
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    val pillWidth = 52.dp
+    val pillHeight = 30.dp
+    val thumbSize = 24.dp
+    val thumbPadding = 3.dp
+
+    val thumbOffset by animateDpAsState(
+        targetValue = if (checked) pillWidth - thumbSize - thumbPadding else thumbPadding,
+        animationSpec = tween(durationMillis = 200),
+        label = "thumb"
+    )
+    val trackColor by animateColorAsState(
+        targetValue = if (checked) MaterialTheme.colorScheme.primary
+                      else MaterialTheme.colorScheme.surfaceVariant,
+        animationSpec = tween(durationMillis = 200),
+        label = "track"
+    )
+
+    Box(
+        modifier = Modifier
+            .size(pillWidth, pillHeight)
+            .clip(RoundedCornerShape(50))
+            .background(trackColor)
+            .clickable { onCheckedChange(!checked) }
+    ) {
+        Box(
+            modifier = Modifier
+                .offset(x = thumbOffset, y = thumbPadding)
+                .size(thumbSize)
+                .clip(CircleShape)
+                .background(Color.White)
+        )
     }
 }
 

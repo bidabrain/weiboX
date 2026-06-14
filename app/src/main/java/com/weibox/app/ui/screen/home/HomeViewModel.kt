@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-private const val REFRESH_INTERVAL_MS = 3 * 60 * 1000L  // 3 分钟
+private const val REFRESH_INTERVAL_MS = 15 * 60 * 1000L  // 15 分钟
 
 data class HomeUiState(
     val posts: List<WeiboPost> = emptyList(),

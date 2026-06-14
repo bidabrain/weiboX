@@ -68,12 +68,15 @@ class WeiboRepository @Inject constructor(
         db.postDao().getByUser(userId).map { list -> list.map { it.toModel() } }
 
     suspend fun refreshTimeline(): List<WeiboPost> =
-        loadTimelinePage(page = 1)
+        loadTimelinePage(page = 1, maxUsers = 10, isBackground = false)
+
+    suspend fun refreshTimelineBackground(): List<WeiboPost> =
+        loadTimelinePage(page = 1, maxUsers = 20, isBackground = true)
 
     suspend fun loadMoreTimeline(page: Int): List<WeiboPost> =
-        loadTimelinePage(page = page)
+        loadTimelinePage(page = page, maxUsers = 10, isBackground = false)
 
-    private suspend fun loadTimelinePage(page: Int): List<WeiboPost> {
+    private suspend fun loadTimelinePage(page: Int, maxUsers: Int, isBackground: Boolean): List<WeiboPost> {
         val users = db.userDao().getAllWithFetchInfo()
         if (users.isEmpty()) return emptyList()
 
@@ -95,7 +98,7 @@ class WeiboRepository @Inject constructor(
 
             val priority = timeSinceFetch.toDouble() / avgInterval
             Pair(user.id, priority)
-        }.sortedByDescending { it.second }
+        }.sortedByDescending { it.second }.take(maxUsers)
 
         if (candidates.isEmpty()) return emptyList()
 
@@ -103,11 +106,15 @@ class WeiboRepository @Inject constructor(
         val posts = mutableListOf<WeiboPost>()
         for ((index, pair) in candidates.withIndex()) {
             val uid = pair.first
-            if (index > 0) delay(Random.nextLong(3_000L, 6_000L))
+            if (index > 0) {
+                if (isBackground) delay(Random.nextLong(6_000L, 12_000L))
+                else delay(Random.nextLong(3_000L, 6_000L))
+            }
 
             var result = runCatching { api.getUserPosts(uid, page) }
 
             if (result.exceptionOrNull() is CaptchaRequiredException) {
+                if (isBackground) break  // 后台遇到验证码，终止本次同步
                 val captchaUrl = (result.exceptionOrNull() as CaptchaRequiredException).captchaUrl
                 captchaManager.await(captchaUrl)
                 api = api()

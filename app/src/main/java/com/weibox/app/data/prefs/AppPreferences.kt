@@ -17,15 +17,17 @@ private val KEY_LAST_REFRESH  = longPreferencesKey("last_refresh")
 private val KEY_WEBDAV_URL    = stringPreferencesKey("webdav_url")
 private val KEY_WEBDAV_USER   = stringPreferencesKey("webdav_user")
 private val KEY_WEBDAV_PASS   = stringPreferencesKey("webdav_pass")
+private val KEY_BG_REFRESH    = booleanPreferencesKey("bg_refresh_enabled")
 
 class AppPreferences(private val context: Context) {
 
-    val cookie: Flow<String>          = context.dataStore.data.map { it[KEY_COOKIE] ?: "" }
-    val darkMode: Flow<Boolean>       = context.dataStore.data.map { it[KEY_DARK_MODE] ?: false }
-    val lastRefreshTime: Flow<Long>   = context.dataStore.data.map { it[KEY_LAST_REFRESH] ?: 0L }
-    val webDavUrl: Flow<String>       = context.dataStore.data.map { it[KEY_WEBDAV_URL] ?: "" }
-    val webDavUser: Flow<String>      = context.dataStore.data.map { it[KEY_WEBDAV_USER] ?: "" }
-    val webDavPass: Flow<String>      = context.dataStore.data.map { it[KEY_WEBDAV_PASS] ?: "" }
+    val cookie: Flow<String>                 = context.dataStore.data.map { it[KEY_COOKIE] ?: "" }
+    val darkMode: Flow<Boolean>              = context.dataStore.data.map { it[KEY_DARK_MODE] ?: false }
+    val lastRefreshTime: Flow<Long>          = context.dataStore.data.map { it[KEY_LAST_REFRESH] ?: 0L }
+    val webDavUrl: Flow<String>              = context.dataStore.data.map { it[KEY_WEBDAV_URL] ?: "" }
+    val webDavUser: Flow<String>             = context.dataStore.data.map { it[KEY_WEBDAV_USER] ?: "" }
+    val webDavPass: Flow<String>             = context.dataStore.data.map { it[KEY_WEBDAV_PASS] ?: "" }
+    val backgroundRefreshEnabled: Flow<Boolean> = context.dataStore.data.map { it[KEY_BG_REFRESH] ?: false }
 
     suspend fun saveCookie(cookie: String) =
         context.dataStore.edit { it[KEY_COOKIE] = cookie }
@@ -35,6 +37,9 @@ class AppPreferences(private val context: Context) {
 
     suspend fun saveLastRefreshTime(time: Long) =
         context.dataStore.edit { it[KEY_LAST_REFRESH] = time }
+
+    suspend fun setBackgroundRefreshEnabled(enabled: Boolean) =
+        context.dataStore.edit { it[KEY_BG_REFRESH] = enabled }
 
     suspend fun saveWebDav(url: String, user: String, pass: String) =
         context.dataStore.edit {

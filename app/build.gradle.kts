@@ -13,8 +13,8 @@ android {
         applicationId = "com.weibox.app"
         minSdk = 26
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables { useSupportLibrary = true }
     }
@@ -73,4 +73,8 @@ dependencies {
     implementation(libs.okhttp.logging)
     implementation(libs.coil.compose)
     implementation("org.jsoup:jsoup:1.18.1")
+    implementation(libs.lifecycle.process)
+    implementation(libs.work.runtime.ktx)
+    implementation(libs.hilt.work)
+    kapt(libs.hilt.ext.compiler)
 }

@@ -13,6 +13,7 @@ import com.weibox.app.R
 import com.weibox.app.data.prefs.AppPreferences
 import com.weibox.app.data.repository.WeiboRepository
 import com.weibox.app.data.webdav.WebDavService
+import com.weibox.app.worker.BackgroundRefreshWorker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -40,7 +41,8 @@ data class SettingsUiState(
     val webDavConfigSaved: Boolean = false,
     val webDavOp: WebDavOp = WebDavOp.NONE,
     val webDavMessage: String? = null,
-    val donateMessage: String? = null
+    val donateMessage: String? = null,
+    val backgroundRefreshEnabled: Boolean = false
 )
 
 @HiltViewModel
@@ -59,6 +61,7 @@ class SettingsViewModel @Inject constructor(
         prefs.webDavUrl.onEach  { v -> _state.update { it.copy(webDavUrl = v, webDavUrlInput = v) } }.launchIn(viewModelScope)
         prefs.webDavUser.onEach { v -> _state.update { it.copy(webDavUser = v, webDavUserInput = v) } }.launchIn(viewModelScope)
         prefs.webDavPass.onEach { v -> _state.update { it.copy(webDavPass = v, webDavPassInput = v) } }.launchIn(viewModelScope)
+        prefs.backgroundRefreshEnabled.onEach { v -> _state.update { it.copy(backgroundRefreshEnabled = v) } }.launchIn(viewModelScope)
     }
 
     // ── Cookie ───────────────────────────────────────────────────
@@ -75,6 +78,12 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun toggleDarkMode() = viewModelScope.launch { prefs.setDarkMode(!_state.value.darkMode) }
+
+    fun toggleBackgroundRefresh() = viewModelScope.launch {
+        val newValue = !_state.value.backgroundRefreshEnabled
+        prefs.setBackgroundRefreshEnabled(newValue)
+        if (!newValue) BackgroundRefreshWorker.cancel(context)
+    }
 
     // ── WebDAV 配置 ──────────────────────────────────────────────
     fun onWebDavUrlChange(v: String)  = _state.update { it.copy(webDavUrlInput = v, webDavConfigSaved = false) }

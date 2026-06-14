@@ -33,7 +33,6 @@ fun CommentsBottomSheet(
     repo: WeiboRepository,
     onDismiss: () -> Unit
 ) {
-    val scope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
 
     var comments by remember { mutableStateOf<List<WeiboComment>>(emptyList()) }

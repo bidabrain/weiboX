@@ -184,3 +184,15 @@ git diff HEAD~1 HEAD weibo.py
 1. 构建并安装到真机
 2. **访客模式**：冷启动 → 搜索用户 → 进入主页 → 查看微博 / 评论
 3. **完整模式**：配置 Cookie → 时间线自动刷新 → 热门评论可分页
+
+---
+
+## Star History
+
+<a href="https://www.star-history.com/?repos=bidabrain%2FweiboX&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=bidabrain/weiboX&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=bidabrain/weiboX&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=bidabrain/weiboX&type=date&legend=top-left" />
+ </picture>
+</a>

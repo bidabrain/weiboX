@@ -5,6 +5,7 @@ import com.weibox.app.data.db.entity.PostEntity
 import kotlinx.coroutines.flow.Flow
 
 data class UserLastPost(val userId: String, val lastPostAt: Long)
+data class UserPostStats(val userId: String, val postCount: Int, val oldestPostAt: Long, val newestPostAt: Long)
 
 @Dao
 interface PostDao {
@@ -28,6 +29,16 @@ interface PostDao {
 
     @Query("SELECT userId, MAX(createdAtTimestamp) AS lastPostAt FROM cached_posts GROUP BY userId")
     suspend fun getLastPostTimestampByUser(): List<UserLastPost>
+
+    @Query("""
+        SELECT userId,
+               COUNT(*) AS postCount,
+               MIN(createdAtTimestamp) AS oldestPostAt,
+               MAX(createdAtTimestamp) AS newestPostAt
+        FROM cached_posts
+        GROUP BY userId
+    """)
+    suspend fun getPostStatsByUser(): List<UserPostStats>
 
     @Query("""
         DELETE FROM cached_posts WHERE id IN (

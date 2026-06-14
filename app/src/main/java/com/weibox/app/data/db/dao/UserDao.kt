@@ -4,6 +4,8 @@ import androidx.room.*
 import com.weibox.app.data.db.entity.UserEntity
 import kotlinx.coroutines.flow.Flow
 
+data class UserFetchInfo(val id: String, val lastFetchedAt: Long)
+
 @Dao
 interface UserDao {
     @Query("SELECT * FROM followed_users ORDER BY followedAt DESC")
@@ -11,6 +13,9 @@ interface UserDao {
 
     @Query("SELECT id FROM followed_users")
     suspend fun getAllIds(): List<String>
+
+    @Query("SELECT id, lastFetchedAt FROM followed_users")
+    suspend fun getAllWithFetchInfo(): List<UserFetchInfo>
 
     @Query("SELECT * FROM followed_users WHERE id = :userId")
     suspend fun getById(userId: String): UserEntity?
@@ -23,4 +28,7 @@ interface UserDao {
 
     @Query("SELECT EXISTS(SELECT 1 FROM followed_users WHERE id = :userId)")
     fun isFollowed(userId: String): Flow<Boolean>
+
+    @Query("UPDATE followed_users SET lastFetchedAt = :time WHERE id = :userId")
+    suspend fun updateLastFetchedAt(userId: String, time: Long)
 }

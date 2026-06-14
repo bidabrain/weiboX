@@ -74,33 +74,50 @@ class WeiboRepository @Inject constructor(
         loadTimelinePage(page = page)
 
     private suspend fun loadTimelinePage(page: Int): List<WeiboPost> {
-        val userIds = db.userDao().getAllIds()
-        if (userIds.isEmpty()) return emptyList()
+        val users = db.userDao().getAllWithFetchInfo()
+        if (users.isEmpty()) return emptyList()
 
-        // 按最近发帖时间排序：有缓存的活跃用户优先，无缓存的新关注用户排最后
-        val lastPostMap = db.postDao().getLastPostTimestampByUser()
-            .associate { it.userId to it.lastPostAt }
-        val sortedIds = userIds.sortedByDescending { lastPostMap[it] ?: 0L }
+        val now = System.currentTimeMillis()
+        val postStats = db.postDao().getPostStatsByUser().associate { it.userId to it }
+
+        // 计算每个用户的逾期率 = 距上次抓取时间 / 该用户平均发帖间隔
+        // 跳过最近 MIN_CHECK_INTERVAL 内已抓过的用户
+        val candidates = users.mapNotNull { user ->
+            val timeSinceFetch = now - user.lastFetchedAt
+            if (timeSinceFetch < MIN_CHECK_INTERVAL_MS) return@mapNotNull null
+
+            val stats = postStats[user.id]
+            val avgInterval = if (stats != null && stats.postCount > 1) {
+                (stats.newestPostAt - stats.oldestPostAt) / (stats.postCount - 1)
+            } else {
+                DEFAULT_POST_INTERVAL_MS
+            }.coerceAtLeast(MIN_POST_INTERVAL_MS)
+
+            val priority = timeSinceFetch.toDouble() / avgInterval
+            Pair(user.id, priority)
+        }.sortedByDescending { it.second }
+
+        if (candidates.isEmpty()) return emptyList()
 
         var api = api()
         val posts = mutableListOf<WeiboPost>()
-        for ((index, uid) in sortedIds.withIndex()) {
-            // 参考 weibo-crawler：请求间隔 3~6 秒随机，避免触发限流
+        for ((index, pair) in candidates.withIndex()) {
+            val uid = pair.first
             if (index > 0) delay(Random.nextLong(3_000L, 6_000L))
 
             var result = runCatching { api.getUserPosts(uid, page) }
 
-            // captcha：挂起等待用户手动完成，完成后用新 cookie 重试一次
             if (result.exceptionOrNull() is CaptchaRequiredException) {
                 val captchaUrl = (result.exceptionOrNull() as CaptchaRequiredException).captchaUrl
-                captchaManager.await(captchaUrl)   // 挂起直到用户完成验证
-                api = api()                         // 用新 cookie 重建实例
+                captchaManager.await(captchaUrl)
+                api = api()
                 result = runCatching { api.getUserPosts(uid, page) }
             }
 
             result.onSuccess { newPosts ->
                 posts.addAll(newPosts)
                 db.postDao().insertAll(newPosts.map { it.toEntity() })
+                db.userDao().updateLastFetchedAt(uid, now)
             }
         }
         trimCache()
@@ -123,5 +140,8 @@ class WeiboRepository @Inject constructor(
 
     companion object {
         private const val MAX_CACHED_POSTS = 500
+        private const val MIN_CHECK_INTERVAL_MS = 5 * 60 * 1000L       // 5 分钟内抓过则跳过
+        private const val DEFAULT_POST_INTERVAL_MS = 6 * 60 * 60 * 1000L // 无历史时默认 6 小时
+        private const val MIN_POST_INTERVAL_MS = 30 * 60 * 1000L        // 平均间隔最低 30 分钟
     }
 }

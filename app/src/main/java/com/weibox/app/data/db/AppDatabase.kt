@@ -9,7 +9,7 @@ import com.weibox.app.data.db.entity.PostEntity
 import com.weibox.app.data.db.entity.StringListConverter
 import com.weibox.app.data.db.entity.UserEntity
 
-@Database(entities = [UserEntity::class, PostEntity::class], version = 1, exportSchema = false)
+@Database(entities = [UserEntity::class, PostEntity::class], version = 2, exportSchema = false)
 @TypeConverters(StringListConverter::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao

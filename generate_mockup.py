@@ -38,9 +38,10 @@ CONTENT_Y = STATUS_H + TOPBAR_H
 # ─── Fonts ────────────────────────────────────────────────────────────────────
 def load_font(size):
     for path in [
+        "/Library/Fonts/Arial Unicode.ttf",
+        "/Library/Fonts/Arial Unicode MS.ttf",
         "/System/Library/Fonts/PingFang.ttc",
         "/System/Library/Fonts/Helvetica.ttc",
-        "/Library/Fonts/Arial Unicode MS.ttf",
     ]:
         if os.path.exists(path):
             try:

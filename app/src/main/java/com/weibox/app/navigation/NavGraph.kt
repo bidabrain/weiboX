@@ -3,7 +3,6 @@ package com.weibox.app.navigation
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.unit.dp
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Bookmarks
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Search
@@ -31,11 +30,10 @@ private sealed class Tab(val route: String, val label: String, val icon: ImageVe
     object Home      : Tab("home",      "时间线",   Icons.Filled.Home)
     object Search    : Tab("search",    "内容发现", Icons.Filled.Search)
     object Following : Tab("following", "关注",     Icons.Filled.People)
-    object Bookmarks : Tab("bookmarks", "关注列表", Icons.Filled.Bookmarks)
     object Settings  : Tab("settings",  "设置",     Icons.Filled.Settings)
 }
 
-private val tabs = listOf(Tab.Home, Tab.Search, Tab.Following, Tab.Bookmarks, Tab.Settings)
+private val tabs = listOf(Tab.Home, Tab.Search, Tab.Following, Tab.Settings)
 
 @Composable
 fun AppNavGraph() {
@@ -98,10 +96,6 @@ fun AppNavGraph() {
                 SearchScreen(onNavigateToProfile = { uid -> navController.navigate("profile/$uid") })
             }
             composable(Tab.Following.route) {
-                FollowingScreen(onNavigateToProfile = { uid -> navController.navigate("profile/$uid") })
-            }
-            composable(Tab.Bookmarks.route) {
-                // 关注列表页（快捷入口，展示已关注的所有用户）
                 FollowingScreen(onNavigateToProfile = { uid -> navController.navigate("profile/$uid") })
             }
             composable(Tab.Settings.route) { SettingsScreen() }

@@ -25,6 +25,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.weibox.app.ui.components.PostCard
+import com.weibox.app.ui.components.WeiboTopBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,27 +53,21 @@ fun ProfileScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(state.user?.screenName ?: "用户详情") },
+            WeiboTopBar(
+                title = state.user?.screenName ?: "用户详情",
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "返回",
-                            tint = MaterialTheme.colorScheme.onPrimary)
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "返回")
                     }
                 },
                 actions = {
                     IconButton(onClick = vm::toggleFollow) {
                         Icon(
                             if (state.isFollowed) Icons.Filled.Check else Icons.Filled.PersonAdd,
-                            contentDescription = if (state.isFollowed) "取消关注" else "关注",
-                            tint = MaterialTheme.colorScheme.onPrimary
+                            contentDescription = if (state.isFollowed) "取消关注" else "关注"
                         )
                     }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    
-                )
+                }
             )
         }
     ) { padding ->

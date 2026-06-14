@@ -488,7 +488,7 @@ public final class DaggerWeiboXApp_HiltComponents_SingletonC {
           return (T) new SearchViewModel(singletonCImpl.weiboRepositoryProvider.get());
 
           case 5: // com.weibox.app.ui.screen.settings.SettingsViewModel 
-          return (T) new SettingsViewModel(singletonCImpl.providePreferencesProvider.get(), singletonCImpl.weiboRepositoryProvider.get());
+          return (T) new SettingsViewModel(singletonCImpl.providePreferencesProvider.get(), singletonCImpl.weiboRepositoryProvider.get(), ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
 
           default: throw new AssertionError(id);
         }

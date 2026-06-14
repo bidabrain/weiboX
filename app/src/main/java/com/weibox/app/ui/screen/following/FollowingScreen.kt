@@ -8,8 +8,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.weibox.app.ui.components.UserCard
+import com.weibox.app.ui.components.WeiboTopBar
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FollowingScreen(
     onNavigateToProfile: (String) -> Unit,
@@ -17,32 +18,15 @@ fun FollowingScreen(
 ) {
     val users by vm.users.collectAsState()
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("关注列表") },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    
-                )
-            )
-        }
-    ) { padding ->
+    Scaffold(topBar = { WeiboTopBar("关注") }) { padding ->
         if (users.isEmpty()) {
-            Box(
-                Modifier.padding(padding).fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    "还没有关注任何用户",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-                )
+            Box(Modifier.padding(padding).fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text("还没有关注任何用户", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f))
             }
         } else {
             LazyColumn(Modifier.padding(padding).fillMaxSize()) {
                 items(users, key = { it.id }) { user ->
-                    com.weibox.app.ui.components.UserCard(
+                    UserCard(
                         user = user,
                         isFollowed = true,
                         onClick = { onNavigateToProfile(user.id) },

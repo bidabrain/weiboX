@@ -1,5 +1,6 @@
 package com.weibox.app.ui.screen.settings
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -10,12 +11,15 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.weibox.app.R
+import com.weibox.app.ui.components.WeiboTopBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -42,15 +46,7 @@ fun SettingsScreen(vm: SettingsViewModel = hiltViewModel()) {
     }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("设置") },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    
-                )
-            )
-        }
+        topBar = { WeiboTopBar("设置") }
     ) { padding ->
         Column(
             Modifier
@@ -224,6 +220,47 @@ fun SettingsScreen(vm: SettingsViewModel = hiltViewModel()) {
                     Text("深色模式", style = MaterialTheme.typography.bodyLarge)
                 }
                 Switch(checked = state.darkMode, onCheckedChange = { vm.toggleDarkMode() })
+            }
+
+            HorizontalDivider()
+
+            // ── 支持开发者 ────────────────────────────────────────
+            SectionTitle("支持开发者")
+            Image(
+                painter = painterResource(R.drawable.payme),
+                contentDescription = "收款二维码",
+                modifier = Modifier
+                    .size(200.dp)
+                    .align(Alignment.CenterHorizontally)
+            )
+            OutlinedButton(
+                onClick = vm::savePayQrCode,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Icon(
+                    Icons.Filled.SaveAlt,
+                    contentDescription = null,
+                    modifier = Modifier.size(18.dp)
+                )
+                Spacer(Modifier.width(6.dp))
+                Text("保存二维码到相册")
+            }
+            state.donateMessage?.let { msg ->
+                val isError = msg.startsWith("保存失败")
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = MaterialTheme.shapes.small,
+                    color = if (isError) MaterialTheme.colorScheme.errorContainer
+                            else MaterialTheme.colorScheme.primaryContainer
+                ) {
+                    Text(
+                        text = msg,
+                        modifier = Modifier.padding(12.dp),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = if (isError) MaterialTheme.colorScheme.onErrorContainer
+                                else MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                }
             }
 
             HorizontalDivider()

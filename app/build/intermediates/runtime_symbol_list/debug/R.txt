@@ -96,6 +96,7 @@ int drawable notification_template_icon_bg 0x7f060011
 int drawable notification_template_icon_low_bg 0x7f060012
 int drawable notification_tile_bg 0x7f060013
 int drawable notify_panel_notification_icon_bg 0x7f060014
+int drawable payme 0x7f060015
 int id accessibility_action_clickable_span 0x7f070000
 int id accessibility_custom_action_0 0x7f070001
 int id accessibility_custom_action_1 0x7f070002

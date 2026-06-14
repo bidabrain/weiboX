@@ -16,6 +16,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.weibox.app.ui.components.UserCard
+import com.weibox.app.ui.components.WeiboTopBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -26,37 +27,20 @@ fun SearchScreen(
     val state by vm.state.collectAsState()
     val listState = rememberLazyListState()
 
-    // 滚动到底部时加载更多
     val shouldLoadMore by remember {
         derivedStateOf {
             val last = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
             last >= listState.layoutInfo.totalItemsCount - 3
         }
     }
-    LaunchedEffect(shouldLoadMore) {
-        if (shouldLoadMore) vm.loadMore()
-    }
+    LaunchedEffect(shouldLoadMore) { if (shouldLoadMore) vm.loadMore() }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("搜索用户") },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    
-                )
-            )
-        }
-    ) { padding ->
+    Scaffold(topBar = { WeiboTopBar("内容发现") }) { padding ->
         Column(Modifier.padding(padding).fillMaxSize()) {
-
-            // 搜索框
             OutlinedTextField(
                 value = state.query,
                 onValueChange = vm::onQueryChange,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
                 label = { Text("用户名或 ID") },
                 placeholder = { Text("输入昵称关键词，或直接输入数字 ID") },
                 trailingIcon = {
@@ -68,40 +52,18 @@ fun SearchScreen(
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                 keyboardActions = KeyboardActions(onSearch = { vm.search() })
             )
-
             HorizontalDivider()
-
-            // 结果区域
             when {
                 state.isLoading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator()
                 }
-
                 state.error != null -> Box(
-                    Modifier.fillMaxSize().padding(32.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = state.error!!,
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-
+                    Modifier.fillMaxSize().padding(32.dp), contentAlignment = Alignment.Center
+                ) { Text(state.error!!, color = MaterialTheme.colorScheme.error) }
                 state.results.isEmpty() && state.query.isNotBlank() -> Box(
-                    Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        "没有找到相关用户",
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-                    )
-                }
-
-                state.results.isNotEmpty() -> LazyColumn(
-                    state = listState,
-                    modifier = Modifier.fillMaxSize()
-                ) {
+                    Modifier.fillMaxSize(), contentAlignment = Alignment.Center
+                ) { Text("没有找到相关用户", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)) }
+                state.results.isNotEmpty() -> LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
                     items(state.results, key = { it.id }) { user ->
                         UserCard(
                             user = user,
@@ -111,13 +73,9 @@ fun SearchScreen(
                         )
                         HorizontalDivider()
                     }
-
                     if (state.isLoadingMore) {
                         item {
-                            Box(
-                                Modifier.fillMaxWidth().padding(16.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
+                            Box(Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
                                 CircularProgressIndicator(modifier = Modifier.size(24.dp))
                             }
                         }

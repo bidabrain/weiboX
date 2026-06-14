@@ -1,0 +1,157 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.weibox.app"
+4    android:versionCode="1"
+5    android:versionName="1.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="26"
+9        android:targetSdkVersion="34" />
+10
+11    <uses-permission android:name="android.permission.INTERNET" />
+11-->/Users/isayama/MyRepo/weiboX/app/src/main/AndroidManifest.xml:4:5-67
+11-->/Users/isayama/MyRepo/weiboX/app/src/main/AndroidManifest.xml:4:22-64
+12    <uses-permission
+12-->/Users/isayama/MyRepo/weiboX/app/src/main/AndroidManifest.xml:5:5-7:38
+13        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+13-->/Users/isayama/MyRepo/weiboX/app/src/main/AndroidManifest.xml:6:9-65
+14        android:maxSdkVersion="28" />
+14-->/Users/isayama/MyRepo/weiboX/app/src/main/AndroidManifest.xml:7:9-35
+15
+16    <permission
+16-->[androidx.core:core:1.12.0] /Users/isayama/.gradle/caches/transforms-3/a4154583762c9f15bca91a316915c52f/transformed/core-1.12.0/AndroidManifest.xml:22:5-24:47
+17        android:name="com.weibox.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+17-->[androidx.core:core:1.12.0] /Users/isayama/.gradle/caches/transforms-3/a4154583762c9f15bca91a316915c52f/transformed/core-1.12.0/AndroidManifest.xml:23:9-81
+18        android:protectionLevel="signature" />
+18-->[androidx.core:core:1.12.0] /Users/isayama/.gradle/caches/transforms-3/a4154583762c9f15bca91a316915c52f/transformed/core-1.12.0/AndroidManifest.xml:24:9-44
+19
+20    <uses-permission android:name="com.weibox.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+20-->[androidx.core:core:1.12.0] /Users/isayama/.gradle/caches/transforms-3/a4154583762c9f15bca91a316915c52f/transformed/core-1.12.0/AndroidManifest.xml:26:5-97
+20-->[androidx.core:core:1.12.0] /Users/isayama/.gradle/caches/transforms-3/a4154583762c9f15bca91a316915c52f/transformed/core-1.12.0/AndroidManifest.xml:26:22-94
+21
+22    <application
+22-->/Users/isayama/MyRepo/weiboX/app/src/main/AndroidManifest.xml:9:5-27:19
+23        android:name="com.weibox.app.WeiboXApp"
+23-->/Users/isayama/MyRepo/weiboX/app/src/main/AndroidManifest.xml:10:9-34
+24        android:allowBackup="true"
+24-->/Users/isayama/MyRepo/weiboX/app/src/main/AndroidManifest.xml:11:9-35
+25        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+25-->[androidx.core:core:1.12.0] /Users/isayama/.gradle/caches/transforms-3/a4154583762c9f15bca91a316915c52f/transformed/core-1.12.0/AndroidManifest.xml:28:18-86
+26        android:debuggable="true"
+27        android:extractNativeLibs="false"
+28        android:icon="@mipmap/ic_launcher"
+28-->/Users/isayama/MyRepo/weiboX/app/src/main/AndroidManifest.xml:12:9-43
+29        android:label="@string/app_name"
+29-->/Users/isayama/MyRepo/weiboX/app/src/main/AndroidManifest.xml:13:9-41
+30        android:roundIcon="@mipmap/ic_launcher_round"
+30-->/Users/isayama/MyRepo/weiboX/app/src/main/AndroidManifest.xml:14:9-54
+31        android:supportsRtl="true"
+31-->/Users/isayama/MyRepo/weiboX/app/src/main/AndroidManifest.xml:15:9-35
+32        android:theme="@style/Theme.WeiboX"
+32-->/Users/isayama/MyRepo/weiboX/app/src/main/AndroidManifest.xml:16:9-44
+33        android:usesCleartextTraffic="false" >
+33-->/Users/isayama/MyRepo/weiboX/app/src/main/AndroidManifest.xml:17:9-45
+34        <activity
+34-->/Users/isayama/MyRepo/weiboX/app/src/main/AndroidManifest.xml:18:9-26:20
+35            android:name="com.weibox.app.MainActivity"
+35-->/Users/isayama/MyRepo/weiboX/app/src/main/AndroidManifest.xml:19:13-41
+36            android:exported="true"
+36-->/Users/isayama/MyRepo/weiboX/app/src/main/AndroidManifest.xml:20:13-36
+37            android:windowSoftInputMode="adjustResize" >
+37-->/Users/isayama/MyRepo/weiboX/app/src/main/AndroidManifest.xml:21:13-55
+38            <intent-filter>
+38-->/Users/isayama/MyRepo/weiboX/app/src/main/AndroidManifest.xml:22:13-25:29
+39                <action android:name="android.intent.action.MAIN" />
+39-->/Users/isayama/MyRepo/weiboX/app/src/main/AndroidManifest.xml:23:17-69
+39-->/Users/isayama/MyRepo/weiboX/app/src/main/AndroidManifest.xml:23:25-66
+40
+41                <category android:name="android.intent.category.LAUNCHER" />
+41-->/Users/isayama/MyRepo/weiboX/app/src/main/AndroidManifest.xml:24:17-77
+41-->/Users/isayama/MyRepo/weiboX/app/src/main/AndroidManifest.xml:24:27-74
+42            </intent-filter>
+43        </activity>
+44
+45        <provider
+45-->[androidx.emoji2:emoji2:1.3.0] /Users/isayama/.gradle/caches/transforms-3/9f1f6f227e3f6062f7a66020b947d2de/transformed/emoji2-1.3.0/AndroidManifest.xml:24:9-32:20
+46            android:name="androidx.startup.InitializationProvider"
+46-->[androidx.emoji2:emoji2:1.3.0] /Users/isayama/.gradle/caches/transforms-3/9f1f6f227e3f6062f7a66020b947d2de/transformed/emoji2-1.3.0/AndroidManifest.xml:25:13-67
+47            android:authorities="com.weibox.app.androidx-startup"
+47-->[androidx.emoji2:emoji2:1.3.0] /Users/isayama/.gradle/caches/transforms-3/9f1f6f227e3f6062f7a66020b947d2de/transformed/emoji2-1.3.0/AndroidManifest.xml:26:13-68
+48            android:exported="false" >
+48-->[androidx.emoji2:emoji2:1.3.0] /Users/isayama/.gradle/caches/transforms-3/9f1f6f227e3f6062f7a66020b947d2de/transformed/emoji2-1.3.0/AndroidManifest.xml:27:13-37
+49            <meta-data
+49-->[androidx.emoji2:emoji2:1.3.0] /Users/isayama/.gradle/caches/transforms-3/9f1f6f227e3f6062f7a66020b947d2de/transformed/emoji2-1.3.0/AndroidManifest.xml:29:13-31:52
+50                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+50-->[androidx.emoji2:emoji2:1.3.0] /Users/isayama/.gradle/caches/transforms-3/9f1f6f227e3f6062f7a66020b947d2de/transformed/emoji2-1.3.0/AndroidManifest.xml:30:17-75
+51                android:value="androidx.startup" />
+51-->[androidx.emoji2:emoji2:1.3.0] /Users/isayama/.gradle/caches/transforms-3/9f1f6f227e3f6062f7a66020b947d2de/transformed/emoji2-1.3.0/AndroidManifest.xml:31:17-49
+52            <meta-data
+52-->[androidx.lifecycle:lifecycle-process:2.7.0] /Users/isayama/.gradle/caches/transforms-3/9c89a2295a70a210449d3fd8f38c5bd1/transformed/lifecycle-process-2.7.0/AndroidManifest.xml:29:13-31:52
+53                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+53-->[androidx.lifecycle:lifecycle-process:2.7.0] /Users/isayama/.gradle/caches/transforms-3/9c89a2295a70a210449d3fd8f38c5bd1/transformed/lifecycle-process-2.7.0/AndroidManifest.xml:30:17-78
+54                android:value="androidx.startup" />
+54-->[androidx.lifecycle:lifecycle-process:2.7.0] /Users/isayama/.gradle/caches/transforms-3/9c89a2295a70a210449d3fd8f38c5bd1/transformed/lifecycle-process-2.7.0/AndroidManifest.xml:31:17-49
+55            <meta-data
+55-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/isayama/.gradle/caches/transforms-3/6dc71cc12f41e9b846f8bff941eeef3a/transformed/profileinstaller-1.3.1/AndroidManifest.xml:29:13-31:52
+56                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+56-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/isayama/.gradle/caches/transforms-3/6dc71cc12f41e9b846f8bff941eeef3a/transformed/profileinstaller-1.3.1/AndroidManifest.xml:30:17-85
+57                android:value="androidx.startup" />
+57-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/isayama/.gradle/caches/transforms-3/6dc71cc12f41e9b846f8bff941eeef3a/transformed/profileinstaller-1.3.1/AndroidManifest.xml:31:17-49
+58        </provider>
+59
+60        <activity
+60-->[androidx.compose.ui:ui-tooling-android:1.6.1] /Users/isayama/.gradle/caches/transforms-3/ba35d91eb0347ca0412d309676069dea/transformed/ui-tooling-release/AndroidManifest.xml:23:9-25:39
+61            android:name="androidx.compose.ui.tooling.PreviewActivity"
+61-->[androidx.compose.ui:ui-tooling-android:1.6.1] /Users/isayama/.gradle/caches/transforms-3/ba35d91eb0347ca0412d309676069dea/transformed/ui-tooling-release/AndroidManifest.xml:24:13-71
+62            android:exported="true" />
+62-->[androidx.compose.ui:ui-tooling-android:1.6.1] /Users/isayama/.gradle/caches/transforms-3/ba35d91eb0347ca0412d309676069dea/transformed/ui-tooling-release/AndroidManifest.xml:25:13-36
+63
+64        <service
+64-->[androidx.room:room-runtime:2.6.1] /Users/isayama/.gradle/caches/transforms-3/aa610fe0149505c9e44b2b16b80d902c/transformed/room-runtime-2.6.1/AndroidManifest.xml:24:9-28:63
+65            android:name="androidx.room.MultiInstanceInvalidationService"
+65-->[androidx.room:room-runtime:2.6.1] /Users/isayama/.gradle/caches/transforms-3/aa610fe0149505c9e44b2b16b80d902c/transformed/room-runtime-2.6.1/AndroidManifest.xml:25:13-74
+66            android:directBootAware="true"
+66-->[androidx.room:room-runtime:2.6.1] /Users/isayama/.gradle/caches/transforms-3/aa610fe0149505c9e44b2b16b80d902c/transformed/room-runtime-2.6.1/AndroidManifest.xml:26:13-43
+67            android:exported="false" />
+67-->[androidx.room:room-runtime:2.6.1] /Users/isayama/.gradle/caches/transforms-3/aa610fe0149505c9e44b2b16b80d902c/transformed/room-runtime-2.6.1/AndroidManifest.xml:27:13-37
+68
+69        <receiver
+69-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/isayama/.gradle/caches/transforms-3/6dc71cc12f41e9b846f8bff941eeef3a/transformed/profileinstaller-1.3.1/AndroidManifest.xml:34:9-52:20
+70            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+70-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/isayama/.gradle/caches/transforms-3/6dc71cc12f41e9b846f8bff941eeef3a/transformed/profileinstaller-1.3.1/AndroidManifest.xml:35:13-76
+71            android:directBootAware="false"
+71-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/isayama/.gradle/caches/transforms-3/6dc71cc12f41e9b846f8bff941eeef3a/transformed/profileinstaller-1.3.1/AndroidManifest.xml:36:13-44
+72            android:enabled="true"
+72-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/isayama/.gradle/caches/transforms-3/6dc71cc12f41e9b846f8bff941eeef3a/transformed/profileinstaller-1.3.1/AndroidManifest.xml:37:13-35
+73            android:exported="true"
+73-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/isayama/.gradle/caches/transforms-3/6dc71cc12f41e9b846f8bff941eeef3a/transformed/profileinstaller-1.3.1/AndroidManifest.xml:38:13-36
+74            android:permission="android.permission.DUMP" >
+74-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/isayama/.gradle/caches/transforms-3/6dc71cc12f41e9b846f8bff941eeef3a/transformed/profileinstaller-1.3.1/AndroidManifest.xml:39:13-57
+75            <intent-filter>
+75-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/isayama/.gradle/caches/transforms-3/6dc71cc12f41e9b846f8bff941eeef3a/transformed/profileinstaller-1.3.1/AndroidManifest.xml:40:13-42:29
+76                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+76-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/isayama/.gradle/caches/transforms-3/6dc71cc12f41e9b846f8bff941eeef3a/transformed/profileinstaller-1.3.1/AndroidManifest.xml:41:17-91
+76-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/isayama/.gradle/caches/transforms-3/6dc71cc12f41e9b846f8bff941eeef3a/transformed/profileinstaller-1.3.1/AndroidManifest.xml:41:25-88
+77            </intent-filter>
+78            <intent-filter>
+78-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/isayama/.gradle/caches/transforms-3/6dc71cc12f41e9b846f8bff941eeef3a/transformed/profileinstaller-1.3.1/AndroidManifest.xml:43:13-45:29
+79                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+79-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/isayama/.gradle/caches/transforms-3/6dc71cc12f41e9b846f8bff941eeef3a/transformed/profileinstaller-1.3.1/AndroidManifest.xml:44:17-85
+79-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/isayama/.gradle/caches/transforms-3/6dc71cc12f41e9b846f8bff941eeef3a/transformed/profileinstaller-1.3.1/AndroidManifest.xml:44:25-82
+80            </intent-filter>
+81            <intent-filter>
+81-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/isayama/.gradle/caches/transforms-3/6dc71cc12f41e9b846f8bff941eeef3a/transformed/profileinstaller-1.3.1/AndroidManifest.xml:46:13-48:29
+82                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+82-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/isayama/.gradle/caches/transforms-3/6dc71cc12f41e9b846f8bff941eeef3a/transformed/profileinstaller-1.3.1/AndroidManifest.xml:47:17-88
+82-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/isayama/.gradle/caches/transforms-3/6dc71cc12f41e9b846f8bff941eeef3a/transformed/profileinstaller-1.3.1/AndroidManifest.xml:47:25-85
+83            </intent-filter>
+84            <intent-filter>
+84-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/isayama/.gradle/caches/transforms-3/6dc71cc12f41e9b846f8bff941eeef3a/transformed/profileinstaller-1.3.1/AndroidManifest.xml:49:13-51:29
+85                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+85-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/isayama/.gradle/caches/transforms-3/6dc71cc12f41e9b846f8bff941eeef3a/transformed/profileinstaller-1.3.1/AndroidManifest.xml:50:17-95
+85-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/isayama/.gradle/caches/transforms-3/6dc71cc12f41e9b846f8bff941eeef3a/transformed/profileinstaller-1.3.1/AndroidManifest.xml:50:25-92
+86            </intent-filter>
+87        </receiver>
+88    </application>
+89
+90</manifest>

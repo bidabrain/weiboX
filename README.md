@@ -1,5 +1,9 @@
 # WeiboX
 
+## 已开源服务器带FCM推送自部署
+服务器部署版支持app上刷新秒刷，无需等待防爬刷新间隔
+**[dataabc/weibo-crawler](https://github.com/bidabrain/weiboX-server)**
+
 **无需登录，开箱即用的第三方微博 Android 客户端。**
 
 安装后直接浏览——App 冷启动时在后台自动完成微博访客 session 初始化，获取真实的访客 Cookie（`SUB` / `XSRF-TOKEN` / `_T_WM` 等），凭此直接调用 `m.weibo.cn` 的移动端 API，无需任何账号配置。如需热门评论分页功能，在设置中粘贴微博 Cookie 即可升级到完整模式。

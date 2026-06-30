@@ -2,7 +2,7 @@
 
 ## 已开源服务器带FCM推送自部署
 服务器部署版支持app上刷新秒刷，无需等待防爬刷新间隔
-**[dataabc/weibo-crawler](https://github.com/bidabrain/weiboX-server)**
+**[bidabrain/weiboX-server](https://github.com/bidabrain/weiboX-server)**
 
 **无需登录，开箱即用的第三方微博 Android 客户端。**
 
